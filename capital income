@@ -1,0 +1,28 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from bs4 import BeautifulSoup
+
+# Set up Selenium WebDriver
+PATH = r"C:\Users\Arun\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+driver.get("https://en.wikipedia.org/wiki/List_of_Asian_countries_by_average_wage")
+soup = BeautifulSoup(driver.page_source, "html.parser")
+container = soup.find("table", class_="wikitable sortable jquery-tablesorter")
+
+# Extract and print the header
+header = container.find("thead")
+head = [cell.text.strip() for cell in header.find_all("th")]
+print(" | ".join(head))  # Print headers separated by ' | '
+
+# Extract and print the rows
+row = container.find("tbody")
+rows = row.find_all("tr")
+
+for r in rows:
+    data = [cell.text.strip() for cell in r.find_all("td")]
+    if data:  # Avoid empty rows
+        print(" | ".join(data))  # Print row data separated by ' | '
+
+driver.quit()
+
