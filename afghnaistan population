@@ -1,0 +1,56 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from bs4 import BeautifulSoup
+
+# Set up Selenium WebDriver
+PATH = r"C:\Users\Arun\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+
+# Navigate to the webpage
+driver.get("https://www.worldometers.info/world-population/afghanistan-population/")
+
+# Parse the page source with BeautifulSoup
+soup = BeautifulSoup(driver.page_source, "html.parser")
+print("Afghanistan Live Population")
+live = soup.find("span", class_="rts-counter").get_text()
+print(live)
+print("-------------------------------------------------------------------")
+
+# Find all table containers
+containers = soup.find_all("div", class_="table-responsive")
+
+# Process each table separately
+for index, container in enumerate(containers):
+    print(f"Processing Table {index + 1}")
+
+    # Extract rows from the current table
+    table = container.find_all("tr")
+
+    # Define column names based on the table index
+    if index == 0:
+        column_names = ["Year", "Population","Yearly % change", "Yearly Change","Migrants","Median Age","Fertility rate", "Density (P/Km²)", "Urban Pop %",
+                        "Urban Population","Country's Share ofWorld Pop","World Population","afg global rank"]
+    elif index == 1:
+        column_names = ["Year", "Population","Yearly % change", "Yearly Change","Migrants","Median Age","Fertility rate", "Density (P/Km²)", "Urban Pop %",
+                        "Urban Population","Country's Share ofWorld Pop","World Population","afg global rank"] # Update this with actual column names
+    elif index == 2:
+        column_names = ["City Name","Population"]  # Update this with actual column names
+    else:
+        column_names = ["Unknown Columns"]
+
+    # Print column names
+    print(" | ".join(column_names))
+
+    # Process rows in the current table
+    for t in table:
+        row = t.find_all("td")  # Extract all <td> cells in the row
+        data = [cell.text.strip() for cell in row]  # Extract and clean cell data
+
+        if data:
+            print("|".join(data))  # Print row data
+    print("-" * 80)
+word=soup.find_all("div",class_="col-md-4")
+print("Afghanistan Demographics")
+for w in word:
+    print(w.text.strip())
