@@ -1,0 +1,38 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from bs4 import BeautifulSoup
+
+# Set up Selenium WebDriver
+PATH = r"C:\Users\Arun\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+driver.get("https://countrymeters.info/en/Afghanistan")
+soup=BeautifulSoup(driver.page_source,"html.parser")
+table=soup.find("div",id="population_clock")
+row=table.find_all("tr")
+for r in row:
+    data=[cell.text.strip() for cell in r]
+    if data:
+        print("|".join(data))
+print("-"*50)
+table2=soup.find("table",class_="facts")
+row2=table2.find_all("tr")
+for ro in row2:
+    data2=[cell.text.strip()for cell in ro]
+    if data2:
+        print("|".join(data2))
+print("-"*60)
+
+table3 = soup.find_all("div", class_="data_div width45")  # Finds all divs with the specified class
+
+for ta in table3:  # Loops through each div
+    row3 = ta.find_all("tr")  # Finds all rows (tr elements) in each div
+
+    for row in row3:  # Loops through rows
+        data3 = [cell.text.strip() for cell in row.find_all("td")]  # Extracts data from cells (td elements)
+
+        if data3:  # Checks if there is data in the row
+            print("|".join(data3))  # Joins and prints the row data
+    print("-" * 50)
+
+driver.quit()
