@@ -1,0 +1,26 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from bs4 import BeautifulSoup
+
+# Set up Selenium WebDriver
+PATH = r"C:\Users\Arun\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+driver.get("https://www.population-trends-asiapacific.org/data/AFG")
+soup=BeautifulSoup(driver.page_source,"html.parser")
+table = soup.find_all("div", class_="table-responsive")
+for ta in table:
+
+    head = ta.find("thead")
+    if head:
+        headers = [cell.text.strip() for cell in head.find_all("th")]
+        print("|".join(headers))  # Print the headers
+
+    # Extract the rows from the <tr> elements
+    rows = ta.find_all("tr")
+    for r in rows:
+        data = [cell.text.strip() for cell in r.find_all("td")]
+        if data:  # Ensure it's not an empty row
+            print("|".join(data))  # Print the row data
+    print("-"*60)
+driver.quit()
