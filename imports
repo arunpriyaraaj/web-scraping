@@ -1,0 +1,33 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from bs4 import BeautifulSoup
+import pandas as pd
+
+PATH = r"C:\Users\Arun\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+all_data = []
+
+def scrap(country, url):
+    driver.get(url)
+    soup = BeautifulSoup(driver.page_source, "html.parser")
+    container = soup.find("table", class_="table table-hover")
+    if container:
+        data = container.find_all("tr")
+        for d in data:
+            row = [cell.text.strip() for cell in d.find_all("td")]
+            if row:
+                row.insert(0, country)  # Add country name as the first column
+                all_data.append(row)  # Append row to the data list
+
+with open(r"C:\Users\Arun\Downloads\country.txt", mode="r", encoding="utf-8") as file:
+    for line in file:
+        country = line.strip()
+        url = f"https://tradingeconomics.com/{country}/imports-by-category"
+        print(f"Scraping data for {country}...")
+        scrap(country, url)
+driver.quit()
+columns = ["Country", "Category", "Value", "Year"]
+df = pd.DataFrame(all_data, columns=columns)
+df.to_csv(r"C:\Users\Arun\Downloads\imports_by_category.csv", index=False, encoding="utf-8")
+print("Data saved to CSV successfully!")
