@@ -1,0 +1,60 @@
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
+import time
+
+# Define PATH to ChromeDriver
+PATH = r"C:\Users\Arun\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+
+
+# Define the scraping function
+def scrap(driver, country):
+    try:
+        # Wait for the page to load
+        time.sleep(3)  # Optional: Replace with WebDriverWait if needed
+
+        # Parse the page source with BeautifulSoup
+        soup = BeautifulSoup(driver.page_source, "html.parser")
+
+        # Find the exports table
+        container = soup.find("table", class_="wikitable sortable plainrowheads jquery-tablesorter")
+        if container:
+            # Extract the headers
+            head = container.find("thead")
+            headers = [cell.text.strip() for cell in head.find_all("th")]
+            print(f"Headers: {headers}")
+
+            # Extract the rows
+            body = container.find("tbody")
+            rows = body.find_all("tr")
+            for row in rows:
+                row_data = [cell.text.strip() for cell in row.find_all("td")]
+                print(f"Row Data: {row_data}")
+        else:
+            print(f"No data table found for {country}.")
+    except Exception as e:
+        print(f"An error occurred for {country}: {e}")
+
+
+# Open the file containing country names
+with open(r"C:\Users\Arun\OneDrive\문서\Names of country.txt", mode="r", encoding="utf-8") as file:
+    for line in file:
+        country = line.strip()
+        url = f"https://en.wikipedia.org/wiki/List_of_exports_of_{country}"
+        print(f"Scraping data for: {country}")
+
+        try:
+            # Navigate to the country's exports page
+            driver.get(url)
+            # Call the scraping function
+            scrap(driver, country)
+        except Exception as e:
+            print(f"Failed to scrape {country}: {e}")
+
+# Quit the WebDriver
+driver.quit()
