@@ -1,0 +1,10 @@
+from bs4 import BeautifulSoup
+import requests
+response = requests.get("https://www.tradeindia.com/blog/top-10-aluminium-products-manufacturers-in-india/")
+soup = BeautifulSoup(response.text, "html.parser")
+container = soup.find("div", class_="post-content gh-content")
+data = container.find_all("h3")
+for index, d in enumerate(data):
+    if index == 10:
+        break
+    print(d.text.strip())
