@@ -1,0 +1,15 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+r=requests.get("https://www.mining-technology.com/marketdata/five-largest-iron-ore-mines-india/?cf-view")
+soup=BeautifulSoup(r.text,"html.parser")
+container=soup.find("div",class_="main-content")
+data=container.find_all("h2")
+datas=[]
+for d in data:
+    text=d.text.strip()
+    datas.append(text)
+df=pd.DataFrame(datas)
+df.to_csv("iron ore .csv",index=False)
+print("Data saved successfully")
+
