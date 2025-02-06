@@ -1,0 +1,21 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+r=requests.get("https://wdra.gov.in/web/wdra/commodities")
+soup=BeautifulSoup(r.text,"html.parser")
+data=[]
+container =soup.find("div",class_="col-sm-6")
+row=container.find_all("li")
+for r in row:
+    text=r.text.strip()
+    data.append(text)
+    # print(data)
+conatiner2=soup.find("div",class_="col-sm-5")
+row2=conatiner2.find_all("li")
+for ro in row2:
+    text2=ro.text.strip()
+    data.append(text2)
+df=pd.DataFrame(data)
+df.to_csv("list_of_agri.csv",index=False)
+print("Data's saved successfully")
+
