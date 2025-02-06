@@ -1,0 +1,21 @@
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+import pandas as pd
+PATH = r"C:\Users\Arun\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+driver.get("https://www.cheggindia.com/general-knowledge/gold-mines-in-india/")
+soup=BeautifulSoup(driver.page_source,"html.parser")
+data=[]
+container=soup.find("ol",class_="wp-block-list")
+name=container.find_all("li")
+for n in name:
+             text=(n.text.strip())
+             data.append(text)
+df=pd.DataFrame(data)
+df.to_csv("goldmines.csv",index=False)
+driver.quit()
+
+
+
