@@ -1,0 +1,8 @@
+from bs4 import BeautifulSoup
+import requests
+response=requests.get("https://khatabook.com/blog/list-of-copper-manufacturers-in-india/")
+soup=BeautifulSoup(response.text,"html.parser")
+container=soup.find("div",class_="content update-content-css")
+data=container.find_all("h3")
+for d in data :
+    print(d.text.strip())
