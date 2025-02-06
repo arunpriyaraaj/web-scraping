@@ -1,0 +1,15 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+r=requests.get("https://www.tradeindia.com/blog/list-of-top-nickel-alloy-manufacturers/")
+soup=BeautifulSoup(r.text,"html.parser")
+container=soup.find("div",class_="post-content gh-content")
+data=container.find_all("h3")
+datas=[]
+for index,d in enumerate(data):
+    if index==10:
+        break
+    tes=d.text.strip()
+    datas.append(tes)
+df=pd.DataFrame(datas)
+df.to_csv("nickey.csv",index=False)
