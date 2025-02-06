@@ -1,0 +1,13 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+r=requests.get("https://www.tradeindia.com/blog/top-9-cotton-fabric-manufacturers-suppliers-exporters-in-india/")
+soup=BeautifulSoup(r.text,"html.parser")
+container=soup.find_all("h2")
+data=[]
+for index ,c in enumerate (container):
+    if index==9:
+        break
+    data.append(c.text.strip())
+df=pd.DataFrame(data)
+df.to_csv("cotton.csv",index=False)
