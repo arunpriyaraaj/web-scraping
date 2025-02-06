@@ -1,0 +1,14 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+r=requests.get("https://www.karacusenergy.com/top-10-lithium-battery-manufacturers-in-india-2023")
+soup=BeautifulSoup(r.text,"html.parser")
+container=soup.find_all("h3")
+data=[]
+for index,c in enumerate(container):
+    if index==10:
+        break
+    text=c.text.strip()
+    data.append(text)
+df=pd.DataFrame(data)
+df.to_csv("lithium.csv",index=False)
