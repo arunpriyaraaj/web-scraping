@@ -1,0 +1,13 @@
+import requests
+from bs4 import BeautifulSoup
+import pandas as pd
+r=requests.get("https://www.constructionworld.in/energy-infrastructure/oil-and-gas/top-10-oil-and-gas-companies-in-india/32052")
+soup=BeautifulSoup(r.text,"html.parser")
+container=soup.find("div",class_="mobile-banner")
+data=container.find_all("h4")
+datas=[]
+for d in data:
+    text=d.text.strip()
+    datas.append(text)
+df=pd.DataFrame(datas)
+df.to_csv("oil&gas.csv",index=False)
