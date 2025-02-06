@@ -1,0 +1,38 @@
+from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+import time
+import pandas as pd
+PATH = r"C:\Users\Arun\Downloads\chromedriver-win64 (1)\chromedriver-win64\chromedriver.exe"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+driver.get("https://blog.tatanexarc.com/da/top-steel-companies-in-india/")
+time.sleep(5)  # Adjust the sleep time if needed
+
+# Parse the page source with BeautifulSoup
+soup = BeautifulSoup(driver.page_source, "html.parser")
+
+# Initialize a list to store all rows
+all_data = []
+
+# Find all rows in the table
+table_rows = soup.find_all("tr")
+
+# Loop through each row and extract data
+for row in table_rows:
+    # Extract all cells (td) and their text
+    cells = [cell.text.strip() for cell in row.find_all("td")]
+    if cells:  # Avoid empty rows
+        all_data.append(cells)
+print(all_data)
+
+# Create a DataFrame
+# df = pd.DataFrame(all_data)
+#
+# # Save the DataFrame to a CSV file
+# df.to_csv("steel.csv", index=False)
+
+# Quit the Selenium WebDriver
+driver.quit()
+
+print("Data saved to steel.csv")
