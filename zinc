@@ -1,0 +1,16 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+from pandas.core.interchange.dataframe_protocol import DataFrame
+
+response=requests.get("https://www.tofler.in/blog/list-of-top-zinc-companies-in-india/")
+soup=BeautifulSoup(response.text,"html.parser")
+table=soup.find("tbody")
+data=table.find_all("tr")
+datas=[]
+for d in data:
+    row_data=[cell.text.strip()for cell in d.find_all("td")]
+    datas.append(row_data)
+df=pd.DataFrame(datas)
+df.to_csv("Zinc.csv",index=False)
+print("Data saved successfully")
