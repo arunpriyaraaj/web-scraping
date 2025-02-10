@@ -1,0 +1,15 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+r=requests.get("https://essfeed.com/the-top-10-largest-millet-companies-in-india/")
+soup=BeautifulSoup(r.text,"html.parser")
+container=soup.find_all("h3",class_="wp-block-heading")
+datas=[]
+for c in container:
+    data=c.find_all("strong")
+    for d in data:
+        text=(d.text.strip())
+        datas.append(text)
+
+df=pd.DataFrame(datas)
+df.to_csv("millet.csv",index=False)
