@@ -1,0 +1,18 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+r=requests.get("https://www.enggpro.com/category/metals/titanium-manufacturers-suppliers-in-india")
+soup=BeautifulSoup(r.text,"html.parser")
+# print(soup)
+container=soup.find("div",class_="postList")
+# print(container)
+data=container.find_all("div",class_="card rounded-3 mb-4 borderedx")
+datas=[]
+for d in data:
+   row=d.find_all("h3",class_="mb-0")
+   for r in row:
+       text=r.text.strip()
+       datas.append(text)
+df=pd.DataFrame(datas)
+df.to_csv("titanium.csv",index=False)
+print("Data's saved successfully")
