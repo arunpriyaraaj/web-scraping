@@ -1,0 +1,17 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+
+r=requests.get("https://www.javatpoint.com/list-of-cement-companies-in-india")
+soup=BeautifulSoup(r.text,"html.parser")
+# container=soup.find("div",class_="nv-content-wrap entry-content")
+data=soup.find_all("h3",class_="h3")
+datas=[]
+for index,d in enumerate( data):
+    if index==15:
+        break
+    text=d.text.strip()
+    datas.append(text)
+
+df=pd.DataFrame(datas)
+df.to_csv("cement.csv",index=False)
