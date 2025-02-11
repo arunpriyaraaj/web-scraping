@@ -1,0 +1,13 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+r=requests.get("https://www.madhavmarbles.com/top-10-granite-suppliers-and-exporters-in-india/")
+soup=BeautifulSoup(r.text,"html.parser")
+can=soup.find("div",class_="entry-content")
+data=can.find_all("h3")
+datas=[]
+for d in data:
+    text=(d.text.strip())
+    datas.append(text)
+df=pd.DataFrame(datas)
+df.to_csv("granite.csv",index=False)
