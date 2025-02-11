@@ -1,0 +1,16 @@
+from bs4 import BeautifulSoup
+import requests
+import pandas as pd
+r=requests.get("https://in.solutions.kompass.com/blog/top-10-gypsum-manufacturers-in-india/")
+soup=BeautifulSoup(r.text,"html.parser")
+# print(soup)
+can=soup.find("div",class_="blog-article-content")
+data=can.find_all("h2")
+datas=[]
+for d in data:
+    text=d.find_all("a")
+    for t in text:
+        row=(t.text.strip())
+        datas.append(row)
+df=pd.DataFrame(datas)
+df.to_csv("gypsum.csv",index=False)
