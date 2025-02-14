@@ -15,6 +15,6 @@ for d in data:
         row=(t.text)
         datas.append(row)
 df=pd.DataFrame(datas)
-df.to_csv('Rubber.csv',index=False)
+df.to_csv('leather.csv',index=False)
 
 driver.quit()
