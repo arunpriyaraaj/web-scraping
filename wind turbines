@@ -1,0 +1,19 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import pandas as pd
+path=r"/Users/arun/Downloads/chromedriver-mac-arm64/chromedriver"
+service=Service(path)
+driver=webdriver.Chrome(service=service)
+driver.get("https://www.blackridgeresearch.com/blog/latest-list-of-top-onshore-wind-power-turbine-manufacturers-suppliers-companies-in-india")
+can=driver.find_element(By.ID,"bview")
+data=can.find_elements(By.CLASS_NAME,"heads")
+datas=[]
+for  index,d in enumerate(data):
+    if index==11:
+        break
+    text=(d.text)
+    datas.append(text)
+df=pd.DataFrame(datas)
+df.to_csv("wind_turbines.csv",index=False)
+driver.quit()
