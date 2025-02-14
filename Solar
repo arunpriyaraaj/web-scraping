@@ -1,0 +1,19 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+import pandas as pd
+path=r"/Users/arun/Downloads/chromedriver-mac-arm64/chromedriver"
+service=Service(path)
+driver=webdriver.Chrome(service=service)
+driver.get("https://housing.com/news/solar-companies-in-india/?gad_source=1&gclid=CjwKCAiA8Lu9BhA8EiwAag16b7eOhRRwlkepDN-W12IQ_rJx5HeqcNP-02Qi_m5qHFpLo4gvSOmTcBoCzgUQAvD_BwE")
+can=driver.find_element(By.CLASS_NAME,"entry-content")
+data=can.find_elements(By.TAG_NAME,"h3")
+datas=[]
+for index, d in enumerate(data):
+    if index==10:
+        break
+    text=d.text
+    datas.append(text)
+df=pd.DataFrame(datas)
+df.to_csv("solar.csv",index=False)
+driver.quit()
