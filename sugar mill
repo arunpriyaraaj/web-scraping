@@ -1,0 +1,17 @@
+from bs4 import  BeautifulSoup
+import requests
+import  pandas as pd
+r=requests.get("https://housing.com/news/sugar-mills-in-india/")
+soup=BeautifulSoup(r.text,"html.parser")
+can=soup.find("div",class_="entry-content")
+data=soup.find_all("h3")
+print("Top Sugar Mills in India")
+print("-"*30)
+datas=[]
+for index,d in enumerate(data):
+    if index==10:
+        break
+    text=(d.text.strip())
+    datas.append(text)
+df=pd.DataFrame(datas)
+df.to_csv("Top_sugar_mills.csv",index=False)
