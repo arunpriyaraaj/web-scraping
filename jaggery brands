@@ -1,0 +1,16 @@
+from bs4 import  BeautifulSoup
+import requests
+import pandas as pd
+r=requests.get("https://cashkaro.com/blog/best-jaggery-brands-india/211949")
+soup=BeautifulSoup(r.text,"html.parser")
+# print(soup)
+can=soup.find("ul",class_="autocontents")
+data=can.find_all("li")
+datas=[]
+print("Top Jaggery brands in india")
+print("-"*25)
+for d in data:
+    text=(d.text.strip())
+    datas.append(text)
+df=pd.DataFrame(datas)
+df.to_csv("jaggery_brands.csv",index=False)
