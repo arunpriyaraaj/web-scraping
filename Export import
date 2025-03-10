@@ -1,0 +1,97 @@
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+import time
+
+# Set up WebDriver
+PATH = r"/Users/arun/Downloads/chromedriver-mac-arm64/chromedriver"
+service = Service(PATH)
+driver = webdriver.Chrome(service=service)
+driver.get("https://tradestat.commerce.gov.in/eidb/ecntcomq.asp")
+wait = WebDriverWait(driver, 10)
+driver.maximize_window()
+
+
+# Function to Select HS Code (8-Digit Level)
+def select_hs_code():
+    wait.until(EC.element_to_be_clickable((By.ID, "hslevel"))).click()
+    time.sleep(2)
+    digit_options = driver.find_elements(By.XPATH, "//*[@id='hslevel']/option")
+
+    for option in digit_options:
+        if option.text.strip() == "8 Digit Level":
+            print(f"Selecting HS Code: {option.text}")
+            option.click()
+            time.sleep(2)
+            break
+
+
+# Function to Select "All Records"
+def select_record():
+    record = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='radioDAll']")))
+    record.click()
+    time.sleep(2)
+
+
+# Function to Select Country
+def select_country():
+    dropdown = wait.until(EC.element_to_be_clickable((By.ID, "select3")))
+    dropdown.click()
+    time.sleep(2)
+
+    options = driver.find_elements(By.XPATH, "//select[@id='select3']/option")
+    for option in options:
+        if option.text.strip().lower() == ("montenegro"):
+
+           # Change country as needed
+            print(f"Selecting: {option.text}")
+            option.click()
+            time.sleep(2)
+            break
+
+        # Function to Loop Through Years & Download Excel
+
+
+def process_years():
+    years = driver.find_elements(By.XPATH, "//*[@id='select2']/option")
+    print(f"Total Years Found: {len(years)}")
+
+    for i in range(0, len(years)):  # Start from 1 to skip placeholder option
+        years = driver.find_elements(By.XPATH, "//*[@id='select2']/option")  # Refresh elements
+        year = years[i]
+        year_value = year.text.strip()
+
+        print(f"Selecting Year: {year_value}")
+        year.click()
+        time.sleep(2)
+
+        # Click Submit Button
+        submit = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='button1']")))
+        submit.click()
+        time.sleep(3)
+
+        # Click Excel Download Button (Ensure the correct button is being clicked)
+        try:
+            xl = wait.until(EC.element_to_be_clickable((By.XPATH, "//*[@id='button1']")))
+            xl.click()
+            print(f"Downloading Excel for Year: {year_value}")
+            time.sleep(5)
+        except Exception as e:
+            print(f"Failed to download Excel for {year_value}: {e}")
+
+        # Navigate back & Reselect Everything
+        driver.get("https://tradestat.commerce.gov.in/eidb/ecntcomq.asp")
+        time.sleep(3)
+
+        select_country()
+        select_hs_code()
+        select_record()
+
+
+select_country()
+select_hs_code()
+select_record()
+process_years()
+driver.quit()
